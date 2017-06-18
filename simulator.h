@@ -21,10 +21,10 @@ public:
     void calculate();
 
 private:
+    const int BASE = 8;
     int matrix_size;
     int thread_size;
     matrix *mat[3];
-    const int BASE = 8;
     int cur_thread;
     MainWindow *mainWindow;
 

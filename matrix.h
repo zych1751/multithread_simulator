@@ -20,8 +20,8 @@ public:
     matrix operator -(const matrix& other) const;
     matrix operator *(const matrix& other) const;
 
-    matrix* merge(const std::vector<std::vector<matrix>>& C) const;
-    std::vector<std::vector<matrix>> split() const;
+    matrix* merge(const std::vector<std::vector<matrix*>>& C) const;
+    std::vector<std::vector<matrix*>> split() const;
 
     int size() const;
     int getArr(int i, int j) const;

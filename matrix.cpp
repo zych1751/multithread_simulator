@@ -88,32 +88,33 @@ matrix matrix::operator *(const matrix& other) const
     return result;
 }
 
-matrix* matrix::merge(const std::vector<std::vector<matrix>>& C) const
+matrix* matrix::merge(const std::vector<std::vector<matrix*>>& C) const
 {
-    int nn = C[0][0].n;
+    return new matrix(16);
+    int nn = C[0][0]->size();
     matrix* result = new matrix(nn*2);
 
     for(int i = 0; i < 2; i++)
         for(int j = 0; j < 2; j++)
             for(int ii = 0; ii < nn; ii++)
                 for(int jj = 0; jj < nn; jj++)
-                    result->arr[ii+i*nn][jj+j*nn] = C[i][j].arr[ii][jj];
+                    result->arr[ii+i*nn][jj+j*nn] = C[i][j]->arr[ii][jj];
 
     return result;
 }
 
-std::vector<std::vector<matrix>> matrix::split() const
+std::vector<std::vector<matrix*>> matrix::split() const
 {
     int nn = n/2;
-    std::vector<std::vector<matrix>> result(2, std::vector<matrix>(2));
+    std::vector<std::vector<matrix*>> result(2, std::vector<matrix*>(2));
 
     for(int i = 0; i < 2; i++)
         for(int j = 0; j < 2; j++)
         {
-            result[i][j].set(nn);
+            result[i][j] = new matrix(nn);
             for(int ii = 0; ii < nn; ii++)
                 for(int jj = 0; jj < nn; jj++)
-                    result[i][j].arr[ii][jj] = arr[ii+i*nn][jj+j*nn];
+                    result[i][j]->arr[ii][jj] = arr[ii+i*nn][jj+j*nn];
         }
     return result;
 }
