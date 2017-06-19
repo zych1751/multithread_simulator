@@ -117,5 +117,5 @@ matrix* simulator::strassen(matrix* a, matrix* b)
         delete M[i];
     }
 
-    return matrix().merge(C);
+    return (new matrix())->merge(C);
 }

@@ -90,7 +90,6 @@ matrix matrix::operator *(const matrix& other) const
 
 matrix* matrix::merge(const std::vector<std::vector<matrix*>>& C) const
 {
-    return new matrix(16);
     int nn = C[0][0]->size();
     matrix* result = new matrix(nn*2);
 
@@ -98,7 +97,7 @@ matrix* matrix::merge(const std::vector<std::vector<matrix*>>& C) const
         for(int j = 0; j < 2; j++)
             for(int ii = 0; ii < nn; ii++)
                 for(int jj = 0; jj < nn; jj++)
-                    result->arr[ii+i*nn][jj+j*nn] = C[i][j]->arr[ii][jj];
+                    result->setArr(ii+i*nn, jj+j*nn, C[i][j]->getArr(ii, jj));
 
     return result;
 }

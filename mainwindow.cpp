@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
     _simulator = new simulator(this);
 
     ui->matrixSizeSlider->setTickInterval(1);
-    ui->matrixSizeSlider->setMaximum(12);
+    ui->matrixSizeSlider->setMaximum(10);
     connect(ui->matrixSizeSlider, SIGNAL (valueChanged(int)), ui->matrixSizeNumber, SLOT (display(int)));
 
     ui->threadSizeSlider->setMaximum(200);
@@ -49,11 +49,13 @@ MainWindow::~MainWindow()
 void MainWindow::setMatrixSize()
 {
     _simulator->setMatrixSize(ui->matrixSizeSlider->value());
+    ui->logText->append("matrx size is changed\n");
 }
 
 void MainWindow::setThreadSize()
 {
     _simulator->setThreadSize(ui->threadSizeSlider->value());
+    ui->logText->append("thread number is changed\n");
 }
 
 void MainWindow::showMatrix(const matrix* mat, int idx) // idx 0 : A, idx 1 : B, idx 2 : C
@@ -78,12 +80,29 @@ void MainWindow::showMatrix(const matrix* mat, int idx) // idx 0 : A, idx 1 : B,
     }
     else
     {
-        cur->setRowCount(1);
-        cur->setColumnCount(1);
-
-        QTableWidgetItem* ccur = new QTableWidgetItem();
-        ccur->setText("matrix size is too big to show");
-        cur->setItem(0, 0, ccur);
+        cur->setRowCount((1<<5)+1);
+        cur->setColumnCount((1<<5)+1);
+        for(int i = 0; i < (1<<5); i++)
+        {
+            for(int j = 0; j < (1<<5); j++)
+            {
+                QTableWidgetItem* ccur = new QTableWidgetItem();
+                ccur->setText(QString::number(mat->getArr(i, j)));
+                ccur->setTextAlignment(Qt::AlignCenter);
+                cur->setItem(i, j, ccur);
+            }
+            QTableWidgetItem* ccur = new QTableWidgetItem();
+            ccur->setText("...");
+            ccur->setTextAlignment(Qt::AlignCenter);
+            cur->setItem(i, (1<<5), ccur);
+        }
+        for(int j = 0; j <= (1<<5); j++)
+        {
+            QTableWidgetItem* ccur = new QTableWidgetItem();
+            ccur->setText("...");
+            ccur->setTextAlignment(Qt::AlignCenter);
+            cur->setItem((1<<5), j, ccur);
+        }
     }
 
     cur->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -92,11 +111,13 @@ void MainWindow::showMatrix(const matrix* mat, int idx) // idx 0 : A, idx 1 : B,
 void MainWindow::resetA()
 {
     _simulator->resetA();
+    ui->logText->append("matrx A reset\n");
 }
 
 void MainWindow::resetB()
 {
     _simulator->resetB();
+    ui->logText->append("matrx B reset\n");
 }
 
 void MainWindow::calculateMatrix()
