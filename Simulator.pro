@@ -25,24 +25,25 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    matrix.cpp \
-    simulator.cpp
+        matrix.cpp \
+        simulator.cpp
 
 HEADERS += \
         mainwindow.h \
-    matrix.h \
-    simulator.h
+        matrix.h \
+        simulator.h
 
 FORMS += \
         mainwindow.ui
 
-INCLUDEPATH += -L C:\boost_1_64_0\boost_1_64_0
-INCLUDEPATH += -L C:\boost_1_64_0\boost_1_64_0\stage\lib
+INCLUDEPATH += C:\boost_1_64_0\boost_1_64_0
 
-LIBS += -L C:\boost_1_64_0\boost_1_64_0\stage\lib\libboost_thread-mgw53-mt-1_64.a
-LIBS += -L C:\boost_1_64_0\boost_1_64_0\stage\lib\libboost_thread-mgw53-mt-d-1_64.a
 LIBS += -L C:\boost_1_64_0\boost_1_64_0\stage\lib\libboost_chrono-mgw53-mt-1_64.a
-LIBS += -L C:\boost_1_64_0\boost_1_64_0\stage\lib\libboost_chrono-mgw53-mt-d-1_64.a
+LIBS += -L C:\boost_1_64_0\boost_1_64_0\stage\lib\libboost_filesystem-mgw53-mt-1_64.a
+LIBS += -L C:\boost_1_64_0\boost_1_64_0\stage\lib\libboost_system-mgw53-mt-1_64.a
+LIBS += -L C:\boost_1_64_0\boost_1_64_0\stage\lib\libboost_thread-mgw53-mt-1_64.a
 
-CONFIG -= windows
-QMAKE_LFLAGS_WINDOWS += -Wl,--stack,32000000
+LIBS += -L C:\boost_lib\boost\bin.v2\libs\chrono\build\gcc-mingw-5.3.0\release\link-static\threading-multi\libboost_chrono-mgw53-mt-1_64.a
+LIBS += -L C:\boost_lib\boost\bin.v2\libs\thread\build\gcc-mingw-5.3.0\release\link-static\threading-multi\libboost_thread-mgw53-mt-1_64.a
+LIBS += -L C:\boost_lib\boost\bin.v2\libs\system\build\gcc-mingw-5.3.0\release\link-static\threading-multi\libboost_system-mgw53-mt-1_64.a
+LIBS += -L C:\boost_lib\boost\bin.v2\libs\filesystem\build\gcc-mingw-5.3.0\release\link-static\threading-multi\libboost_filesystem-mgw53-mt-1_64.a

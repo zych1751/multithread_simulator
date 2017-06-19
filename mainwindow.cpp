@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-//#include <boost/chrono.hpp>
+#include <boost/chrono.hpp>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -122,12 +122,12 @@ void MainWindow::resetB()
 
 void MainWindow::calculateMatrix()
 {
-//    boost::chrono::system_clock::time_point start = boost::chrono::system_clock::now();
+    boost::chrono::system_clock::time_point start = boost::chrono::system_clock::now();
     _simulator->calculate();
 
-//    boost::chrono::duration<double> t = boost::chrono::system_clock::now() - start;
+    boost::chrono::duration<double> t = boost::chrono::system_clock::now() - start;
 
     ui->logText->append("matrix size : " + QString::number(_simulator->getMatrixSize()) +
                         ", additional thread number : " + QString::number(_simulator->getThreadSize()) +
-                        ", result : " + QString::number(0.0) + "(s)\n");
+                        ", result : " + QString::number(t.count()) + "(s)\n");
 }
