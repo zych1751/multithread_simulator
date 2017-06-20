@@ -6,7 +6,6 @@ simulator::simulator(MainWindow *window)
 {
     matrix_size = 1;
     thread_size = 0;
-    cur_thread = 0;
 
     for(int i = 0; i < 3; i++)
         mat[i] = boost::shared_ptr<matrix>(new matrix(1));
@@ -65,7 +64,7 @@ void simulator::resetB()
 void simulator::calculate()
 {
     QTextStream qt(stdout);
-    qt << cur_thread << endl;
+    qt << _counter.get() << endl;
 
     strassen(mat[0], mat[1], mat[2]);
 
@@ -98,9 +97,9 @@ void simulator::strassen(boost::shared_ptr<matrix> a, boost::shared_ptr<matrix> 
 
     for(int i = 0; i < 7; i++)
     {
-        if(cur_thread < thread_size)
+        if(_counter.canAdd(thread_size))
         {
-            cur_thread++;
+            _counter.incerase();
             th[i] = boost::shared_ptr<boost::thread>(new boost::thread(&simulator::strassen, this, l[i], r[i], boost::ref(M[i])));
             waited[i] = true;
         }
@@ -111,7 +110,7 @@ void simulator::strassen(boost::shared_ptr<matrix> a, boost::shared_ptr<matrix> 
         if(waited[i])
         {
             th[i]->join();
-            cur_thread--;
+            _counter.decrease();
         }
 
     std::vector<std::vector<boost::shared_ptr<matrix>>> C(2, std::vector<boost::shared_ptr<matrix>>(2));

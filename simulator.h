@@ -5,6 +5,7 @@
 #include "mainwindow.h"
 #include <QMainWindow>
 #include <boost/thread.hpp>
+#include "counter.h"
 
 class MainWindow;
 
@@ -27,7 +28,7 @@ private:
     int matrix_size;
     int thread_size;
     boost::shared_ptr<matrix> mat[3];
-    int cur_thread;
+    counter _counter;
     MainWindow *mainWindow;
 
     void view(boost::shared_ptr<matrix> mat);

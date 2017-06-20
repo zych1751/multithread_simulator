@@ -26,12 +26,14 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
         matrix.cpp \
-        simulator.cpp
+        simulator.cpp \
+    counter.cpp
 
 HEADERS += \
         mainwindow.h \
         matrix.h \
-        simulator.h
+        simulator.h \
+    counter.h
 
 FORMS += \
         mainwindow.ui
