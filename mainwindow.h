@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "simulator.h"
+#include <boost/thread.hpp>
 
 namespace Ui {
 class MainWindow;
@@ -21,7 +22,7 @@ public:
     void setName(const QString& name);
     QString name() const;
 
-    void showMatrix(const matrix* mat, int idx); // idx 0 : A, idx 1 : B, idx 2 : C
+    void showMatrix(const boost::shared_ptr<matrix> mat, int idx); // idx 0 : A, idx 1 : B, idx 2 : C
 
 public slots:
     void setMatrixSize();

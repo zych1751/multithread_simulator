@@ -1,5 +1,6 @@
 #include "simulator.h"
 #include <boost/thread.hpp>
+#include <QTextStream>
 
 simulator::simulator(MainWindow *window)
 {
@@ -8,7 +9,7 @@ simulator::simulator(MainWindow *window)
     cur_thread = 0;
 
     for(int i = 0; i < 3; i++)
-        mat[i] = new matrix(1);
+        mat[i] = boost::shared_ptr<matrix>(new matrix(1));
 
     mainWindow = window;
 
@@ -25,8 +26,7 @@ void simulator::setMatrixSize(int n)
 
     for(int i = 0; i < 3; i++)
     {
-        delete mat[i];
-        mat[i] = new matrix(matrix_size);
+        mat[i] = boost::shared_ptr<matrix>(new matrix(matrix_size));
         mainWindow->showMatrix(mat[i], i);
     }
 }
@@ -64,67 +64,70 @@ void simulator::resetB()
 
 void simulator::calculate()
 {
-    delete mat[2];
+    QTextStream qt(stdout);
+    qt << cur_thread << endl;
 
-    mat[2] = strassen(mat[0], mat[1]);
+    strassen(mat[0], mat[1], mat[2]);
 
     mainWindow->showMatrix(mat[2], 2);
 }
 
-matrix* simulator::strassen(matrix* a, matrix* b)
+void simulator::strassen(boost::shared_ptr<matrix> a, boost::shared_ptr<matrix> b, boost::shared_ptr<matrix>& c)
 {
     if(a->size() <= BASE)
-        return new matrix((*a)*(*b));
+    {
+        c = boost::shared_ptr<matrix>(new matrix((*a)*(*b)));
+        return;
+    }
 
     auto A = a->split();
     auto B = b->split();
 
-    matrix *M[7], *l[7], *r[7];
+    boost::shared_ptr<matrix> M[7], l[7], r[7];
+
+    l[0] = boost::shared_ptr<matrix>(new matrix(*A[0][0]+*A[1][1])), r[0] = boost::shared_ptr<matrix>(new matrix(*B[0][0]+*B[1][1]));
+    l[1] = boost::shared_ptr<matrix>(new matrix(*A[1][0]+*A[1][1])), r[1] = boost::shared_ptr<matrix>(new matrix(*B[0][0]));
+    l[2] = boost::shared_ptr<matrix>(new matrix(*A[0][0])), r[2] = boost::shared_ptr<matrix>(new matrix(*B[0][1]-*B[1][1]));
+    l[3] = boost::shared_ptr<matrix>(new matrix(*A[1][1])), r[3] = boost::shared_ptr<matrix>(new matrix(*B[1][0]-*B[0][0]));
+    l[4] = boost::shared_ptr<matrix>(new matrix(*A[0][0]+*A[0][1])), r[4] = boost::shared_ptr<matrix>(new matrix(*B[1][1]));
+    l[5] = boost::shared_ptr<matrix>(new matrix(*A[1][0]-*A[0][0])), r[5] = boost::shared_ptr<matrix>(new matrix(*B[0][0]+*B[0][1]));
+    l[6] = boost::shared_ptr<matrix>(new matrix(*A[0][1]-*A[1][1])), r[6] = boost::shared_ptr<matrix>(new matrix(*B[1][0]+*B[1][1]));
+
+    boost::shared_ptr<boost::thread> th[7];
     bool waited[7] = {0, };
-    boost::thread *th[7];
 
-    l[0] = new matrix(*A[0][0]+*A[1][1]), r[0] = new matrix(*B[0][0]+*B[1][1]);
-    l[1] = new matrix(*A[1][0]+*A[1][1]), r[1] = new matrix(*B[0][0]);
-    l[2] = new matrix(*A[0][0]), r[2] = new matrix(*B[0][1]-*B[1][1]);
-    l[3] = new matrix(*A[1][1]), r[3] = new matrix(*B[1][0]-*B[0][0]);
-    l[4] = new matrix(*A[0][0]+*A[0][1]), r[4] = new matrix(*B[1][1]);
-    l[5] = new matrix(*A[1][0]-*A[0][0]), r[5] = new matrix(*B[0][0]+*B[0][1]);
-    l[6] = new matrix(*A[0][1]-*A[1][1]), r[6] = new matrix(*B[1][0]+*B[1][1]);
-
-    for(int i = 0; i < 6; i++)
+    for(int i = 0; i < 7; i++)
     {
         if(cur_thread < thread_size)
         {
             cur_thread++;
-            th[i] = new boost::thread([&]{M[i] = strassen(l[i], r[i]);});
+            th[i] = boost::shared_ptr<boost::thread>(new boost::thread(&simulator::strassen, this, l[i], r[i], boost::ref(M[i])));
             waited[i] = true;
         }
-        else    M[i] = strassen(l[i], r[i]);
+        else    strassen(l[i], r[i], M[i]);
     }
 
-    M[6] = strassen(l[6], r[6]);
-
-    for(int i = 0; i < 6; i++)
+    for(int i = 0; i < 7; i++)
         if(waited[i])
         {
             th[i]->join();
             cur_thread--;
-            delete th[i];
         }
 
-    std::vector<std::vector<matrix*>> C(2, std::vector<matrix*>(2));
+    std::vector<std::vector<boost::shared_ptr<matrix>>> C(2, std::vector<boost::shared_ptr<matrix>>(2));
 
-    C[0][0] = new matrix((*M[0])+(*M[3])-(*M[4])+(*M[6]));
-    C[0][1] = new matrix((*M[2])+(*M[4]));
-    C[1][0] = new matrix((*M[1])+(*M[3]));
-    C[1][1] = new matrix((*M[0])-(*M[1])+(*M[2])+(*M[5]));
+    C[0][0] = boost::shared_ptr<matrix>(new matrix((*M[0])+(*M[3])-(*M[4])+(*M[6])));
+    C[0][1] = boost::shared_ptr<matrix>(new matrix((*M[2])+(*M[4])));
+    C[1][0] = boost::shared_ptr<matrix>(new matrix((*M[1])+(*M[3])));
+    C[1][1] = boost::shared_ptr<matrix>(new matrix((*M[0])-(*M[1])+(*M[2])+(*M[5])));
 
-    for(int i = 0; i < 7; i++)
-    {
-        delete l[i];
-        delete r[i];
-        delete M[i];
-    }
+    int nn = C[0][0]->size();
+    c = boost::shared_ptr<matrix>(new matrix(nn*2));
 
-    return (new matrix())->merge(C);
+    for(int i = 0; i < 2; i++)
+        for(int j = 0; j < 2; j++)
+            for(int ii = 0; ii < nn; ii++)
+                for(int jj = 0; jj < nn; jj++)
+                    c->setArr(ii+i*nn, jj+j*nn, C[i][j]->getArr(ii, jj));
+    return;
 }

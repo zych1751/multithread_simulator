@@ -40,20 +40,6 @@ matrix::~matrix()
     delete[] arr;
 }
 
-void matrix::set(int _n)
-{
-    n = _n;
-
-    arr = new long long*[n];
-
-    for(int i = 0; i < n; i++)
-    {
-        arr[i] = new long long[n];
-        for(int j = 0; j < n; j++)
-            arr[i][j] = 0;
-    }
-}
-
 matrix matrix::operator +(const matrix& other) const
 {
     matrix result(n);
@@ -88,29 +74,15 @@ matrix matrix::operator *(const matrix& other) const
     return result;
 }
 
-matrix* matrix::merge(const std::vector<std::vector<matrix*>>& C) const
-{
-    int nn = C[0][0]->size();
-    matrix* result = new matrix(nn*2);
-
-    for(int i = 0; i < 2; i++)
-        for(int j = 0; j < 2; j++)
-            for(int ii = 0; ii < nn; ii++)
-                for(int jj = 0; jj < nn; jj++)
-                    result->setArr(ii+i*nn, jj+j*nn, C[i][j]->getArr(ii, jj));
-
-    return result;
-}
-
-std::vector<std::vector<matrix*>> matrix::split() const
+std::vector<std::vector<boost::shared_ptr<matrix>>> matrix::split() const
 {
     int nn = n/2;
-    std::vector<std::vector<matrix*>> result(2, std::vector<matrix*>(2));
+    std::vector<std::vector<boost::shared_ptr<matrix>>> result(2, std::vector<boost::shared_ptr<matrix>>(2));
 
     for(int i = 0; i < 2; i++)
         for(int j = 0; j < 2; j++)
         {
-            result[i][j] = new matrix(nn);
+            result[i][j] = boost::shared_ptr<matrix>(new matrix(nn));
             for(int ii = 0; ii < nn; ii++)
                 for(int jj = 0; jj < nn; jj++)
                     result[i][j]->arr[ii][jj] = arr[ii+i*nn][jj+j*nn];

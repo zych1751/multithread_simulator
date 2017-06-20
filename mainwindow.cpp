@@ -58,7 +58,7 @@ void MainWindow::setThreadSize()
     ui->logText->append("thread number is changed\n");
 }
 
-void MainWindow::showMatrix(const matrix* mat, int idx) // idx 0 : A, idx 1 : B, idx 2 : C
+void MainWindow::showMatrix(const boost::shared_ptr<matrix> mat, int idx) // idx 0 : A, idx 1 : B, idx 2 : C
 {
     QTableWidget *cur;
     if(idx == 0)    cur = ui->matrixAView;

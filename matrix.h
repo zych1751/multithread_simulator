@@ -2,6 +2,7 @@
 #define MATRIX_H
 
 #include <vector>
+#include <boost/thread.hpp>
 
 class matrix
 {
@@ -14,14 +15,11 @@ public:
     matrix(const matrix& m);
     ~matrix();
 
-    void set(int _n);
-
     matrix operator +(const matrix& other) const;
     matrix operator -(const matrix& other) const;
     matrix operator *(const matrix& other) const;
 
-    matrix* merge(const std::vector<std::vector<matrix*>>& C) const;
-    std::vector<std::vector<matrix*>> split() const;
+    std::vector<std::vector<boost::shared_ptr<matrix>>> split() const;
 
     int size() const;
     int getArr(int i, int j) const;

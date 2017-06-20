@@ -4,6 +4,7 @@
 #include "matrix.h"
 #include "mainwindow.h"
 #include <QMainWindow>
+#include <boost/thread.hpp>
 
 class MainWindow;
 
@@ -19,17 +20,17 @@ public:
     void resetA();
     void resetB();
     void calculate();
+    void strassen(boost::shared_ptr<matrix> a, boost::shared_ptr<matrix> b, boost::shared_ptr<matrix>& c);
 
 private:
     const int BASE = 8;
     int matrix_size;
     int thread_size;
-    matrix *mat[3];
+    boost::shared_ptr<matrix> mat[3];
     int cur_thread;
     MainWindow *mainWindow;
 
-    matrix* strassen(matrix* a, matrix* b);
-    void view(matrix* mat);
+    void view(boost::shared_ptr<matrix> mat);
 };
 
 #endif // SIMULATOR_H
