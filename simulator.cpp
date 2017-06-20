@@ -63,9 +63,6 @@ void simulator::resetB()
 
 void simulator::calculate()
 {
-    QTextStream qt(stdout);
-    qt << _counter.get() << endl;
-
     strassen(mat[0], mat[1], mat[2]);
 
     mainWindow->showMatrix(mat[2], 2);
